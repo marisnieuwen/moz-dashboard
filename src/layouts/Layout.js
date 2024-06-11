@@ -23,7 +23,7 @@ const Layout = ({ children }) => {
         >
           <Container
             maxWidth="lg"
-            style={{ width: "100%", maxWidth: "1600px" }}
+            style={{ width: "100%" }}
           >
             {children}
           </Container>
