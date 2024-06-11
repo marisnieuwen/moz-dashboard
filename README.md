@@ -1,70 +1,61 @@
-# Getting Started with Create React App
+# MoZ Monitoringstool - README
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<img src="src/images/moz-mascot.svg" alt="MoZ Mascot" height="64" width="64">
 
-## Available Scripts
+## Introductie
 
-In the project directory, you can run:
+De MoZ Monitoringstool is een webapplicatie die is ontwikkeld om medewerkers en onderzoekers van het programma MoZ (Mentoren op Zuid) inzicht te geven in de feedback van deelnemers. De gegevens van de evaluaties worden in deze tool verzameld en geanalyseerd, zodat MoZ een duidelijk beeld krijgt van de ervaringen en meningen van de mentoren en mentees.
 
-### `npm start`
+Deze webapplicatie is gebouwd met React.js en maakt gebruik van Firebase om de data op te halen. Voor het genereren en downloaden van rapportages wordt gebruik gemaakt van jsPDF en html2canvas. Deze rapportages bevatten de verzamelde data, hoewel de huidige implementatie beperkt is omdat tekst in de PDF niet geselecteerd kan worden. In de toekomst zou deze functionaliteit kunnen worden verbeterd door een andere techniek te gebruiken, waardoor er ook een bewerkingsfunctionaliteit in de webapp kan worden toegevoegd.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Vereisten
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Node.js
+- React.js
+- Firebase
+- jsPDF
+- html2canvas
 
-### `npm test`
+## Installatie
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Installeer de benodigde dependencies:**
 
-### `npm run build`
+   ```bash
+   npm install
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. **Configureer Firebase:**
+   - Maak een Firebase-project aan in de [Firebase Console](https://console.firebase.google.com/).
+   - Voeg je Firebase-configuratie toe in een `.env` bestand:
+     ```
+     REACT_APP_FIREBASE_API_KEY=YOUR_API_KEY
+     REACT_APP_FIREBASE_AUTH_DOMAIN=YOUR_AUTH_DOMAIN
+     REACT_APP_FIREBASE_PROJECT_ID=YOUR_PROJECT_ID
+     REACT_APP_FIREBASE_STORAGE_BUCKET=YOUR_STORAGE_BUCKET
+     REACT_APP_FIREBASE_MESSAGING_SENDER_ID=YOUR_MESSAGING_SENDER_ID
+     REACT_APP_FIREBASE_APP_ID=YOUR_APP_ID
+     ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Gebruik
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. **Start de webapplicatie:**
 
-### `npm run eject`
+   ```bash
+   npm start
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. **Gebruik de applicatie:**
+   - Bekijk en analyseer de evaluatiedata die van de mentoren en mentees is verzameld.
+   - Genereer rapportages door gebruik te maken van de jsPDF en html2canvas functionaliteit.
+   - Download de rapportages als PDF-bestanden. Houd er rekening mee dat in de huidige implementatie de tekst in de PDF niet geselecteerd kan worden.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Toekomstige verbeteringen
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Gebruik maken van een andere techniek voor het genereren van PDF's, zodat tekst geselecteerd kan worden in de PDF.
+- Toevoegen van een bewerkingsfunctionaliteit in de webapp, waardoor rapportages in de webapp zelf kunnen worden aangepast en vervolgens als PDF gedownload kunnen worden.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Structuur
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- /src - Bevat de React.js frontend code
+- /public - Bevat de statische bestanden
+- .env - Bevat de configuratie variabelen voor Firebase

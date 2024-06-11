@@ -1,0 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
+
+body {
+  font-family: "Montserrat", sans-serif;
+}
+
+.image-container {
+  justify-self: center;
+  margin: 3rem 0.625rem;
+  width: 100%;
+}
+
+.image-verander {
+  width: 50rem;
+  height: 50rem;
+}
+.report-container {
+  font-size: 18px; /* Increase the base font size */
+  padding: 20px; /* Add more padding */
+  line-height: 1.6; /* Increase line height for readability */
+}
+
+.report-container h1 {
+  font-size: 26px; /* Increase heading size */
+  margin-bottom: 20px;
+  color: #6951c6;
+  font-weight: 900;
+}
+
+.report-container h2 {
+  font-size: 22px; /* Increase subheading size */
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 700;
+}
+
+.report-container h3 {
+  font-size: 20px; /* Increase subheading size */
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 700;
+}
+
+.report-container p {
+  font-size: 18px; /* Increase paragraph size */
+  margin-bottom: 10px;
+  color: rgba(0, 0, 2, 0.87);
+  font-weight: 400;
+  letter-spacing: 0.0625rem;
+}
+
+.report-container img {
+  max-width: 100%; /* Ensure images are responsive */
+  height: auto;
+  margin: 20px 0; /* Add margin around images */
+}
+
+.band-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Add more space between items */
+}
