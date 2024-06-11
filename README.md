@@ -6,7 +6,7 @@
 
 De MoZ Monitoringstool is een webapplicatie die is ontwikkeld om medewerkers en onderzoekers van het programma MoZ (Mentoren op Zuid) inzicht te geven in de feedback van deelnemers. De gegevens van de evaluaties worden in deze tool verzameld en geanalyseerd, zodat MoZ een duidelijk beeld krijgt van de ervaringen en meningen van de mentoren en mentees.
 
-Deze webapplicatie is gebouwd met React.js en maakt gebruik van Firebase om de data op te halen. Voor het genereren en downloaden van rapportages wordt gebruik gemaakt van jsPDF en html2canvas. Deze rapportages bevatten de verzamelde data, hoewel de huidige implementatie beperkt is omdat tekst in de PDF niet geselecteerd kan worden. In de toekomst zou deze functionaliteit kunnen worden verbeterd door een andere techniek te gebruiken, waardoor er ook een bewerkingsfunctionaliteit in de webapp kan worden toegevoegd.
+Deze webapplicatie is gebouwd met React.js en MUI en maakt gebruik van Firebase om de data op te halen. Voor het genereren en downloaden van rapportages wordt gebruik gemaakt van jsPDF en html2canvas. Deze rapportages bevatten de verzamelde data, hoewel de huidige implementatie beperkt is omdat tekst in de PDF niet geselecteerd kan worden. In de toekomst zou deze functionaliteit kunnen worden verbeterd door een andere techniek te gebruiken, waardoor er ook een bewerkingsfunctionaliteit in de webapp kan worden toegevoegd.
 
 ## Vereisten
 
