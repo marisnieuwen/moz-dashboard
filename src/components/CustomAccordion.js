@@ -57,7 +57,6 @@ const CustomAccordionDetails = styled(AccordionDetails)(({ theme }) => ({
   width: "100%",
   padding: "0.625rem 1.25rem 1.25rem 2rem",
   flexGrow: 1,
-  minWidth: "87rem",
 }));
 
 const HeaderFrame = styled(Box)({
