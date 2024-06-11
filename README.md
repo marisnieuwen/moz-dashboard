@@ -1,4 +1,4 @@
-# MoZ Monitoringstool - README
+# MoZ Dashboard - README
 
 <img src="src/images/moz-mascot.svg" alt="MoZ Mascot" height="64" width="64">
 
