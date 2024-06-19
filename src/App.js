@@ -8,6 +8,7 @@ import { DataProvider } from "./context/DataContext";
 
 function App() {
   return (
+    // Wrap the app in the DataProvider
     <DataProvider>
       <Router>
         <Box

@@ -7,6 +7,7 @@ import EvaluationCard from "../components/EvaluationCard";
 import PerTrajectCard from "../components/PerTrajectCard";
 import RapportageModal from "../components/RapportageModal";
 
+// Import the icons
 import BandIcon from "../images/icon-band.svg";
 import TerugblikIcon from "../images/icon-terugblik.svg";
 import DoelenIcon from "../images/icon-doelen.svg";
@@ -14,6 +15,7 @@ import MotivatieIcon from "../images/icon-motivatie.svg";
 import SfeerIcon from "../images/icon-sfeer.svg";
 import MozIcon from "../images/icon-moz.svg";
 
+// Styled Button
 const StyledButton = styled(Button)(({ variant }) => ({
   display: "flex",
   height: "3.625rem",
@@ -27,10 +29,14 @@ const StyledButton = styled(Button)(({ variant }) => ({
     : { background: "#182C61", color: "#fff" }),
 }));
 
+// ReportPage Component
 const ReportPage = () => {
+  // State for the year
   const [year, setYear] = React.useState("2023 - 2024");
+  // State for the modal
   const [modalOpen, setModalOpen] = useState(false);
 
+  // Handle year change
   const handleYearChange = (event) => {
     setYear(event.target.value);
   };
@@ -52,6 +58,7 @@ const ReportPage = () => {
     "MoZ-Programma (Mentor)": MozIcon,
   };
 
+  // Data for the accordions
   const accordionData = [
     {
       title: "Band Mentor-Mentee",

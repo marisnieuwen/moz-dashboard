@@ -2,21 +2,25 @@ import React from "react";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 
-// Component for displaying and exporting the report
+// Functie om een PDF te genereren
 const Report = ({ data }) => {
   const generatePDF = () => {
+    // Maak een nieuwe PDF aan
     const doc = new jsPDF();
 
+    // Voeg de inhoud toe aan de PDF
     doc.setFontSize(18);
     doc.text("Voortgangsrapportage Mentoren op Zuid", 14, 22);
     doc.setFontSize(12);
     doc.text("Periode: 2022", 14, 30);
     doc.text("Programmateam 25%", 14, 36);
 
+    // Voeg de eerste tabel toe
     doc.setFontSize(14);
     doc.text("1. Tevredenheid deelnemers", 14, 50);
     doc.autoTable({ startY: 55, html: "#satisfactionTable" });
 
+    // Voeg de overige tabellen toe
     doc.setFontSize(14);
     doc.text(
       "2. Aanwezigheid en voorbereiding",
@@ -57,6 +61,7 @@ const Report = ({ data }) => {
       html: "#equipmentTable",
     });
 
+    // Sla de PDF op
     doc.save("Voortgangsrapportage.pdf");
   };
 

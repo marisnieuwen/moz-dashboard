@@ -52,16 +52,23 @@ const getEmojiIcon = (score) => {
   }
 };
 
+// Function to generate the PDF
 const generatePDF = async () => {
+  // Select the report container
   const report = document.querySelector(".report-container");
+  // Convert the report container to a canvas
   const canvas = await html2canvas(report, { scale: 2 });
+  // Convert the canvas to an image
   const imgData = canvas.toDataURL("image/png");
+  // New instance of jsPDF
   const pdf = new jsPDF("p", "mm", "a4");
 
-  const margin = 10; // 30 mm margin for all sides
-
+  // Margins and dimensions for the PDF
+  const margin = 10;
   const pdfWidth = pdf.internal.pageSize.getWidth() - margin * 2;
   const pdfHeight = pdf.internal.pageSize.getHeight() - margin * 2;
+
+  // Get the image properties
   const imgProps = pdf.getImageProperties(imgData);
   const imgWidth = pdfWidth;
   const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
@@ -69,9 +76,11 @@ const generatePDF = async () => {
   let heightLeft = imgHeight;
   let position = margin;
 
+  // Add the image to the PDF
   pdf.addImage(imgData, "PNG", margin, position, imgWidth, imgHeight);
   heightLeft -= pdfHeight;
 
+  // Add extra pages if the image height is larger than the PDF height
   while (heightLeft >= 0) {
     position = heightLeft - imgHeight + margin;
     pdf.addPage();
@@ -79,6 +88,7 @@ const generatePDF = async () => {
     heightLeft -= pdfHeight;
   }
 
+  // Save the PDF
   pdf.save("Voortgangsrapportage.pdf");
 };
 
