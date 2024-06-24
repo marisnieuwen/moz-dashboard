@@ -1,13 +1,8 @@
 // src/utils/dataUtils.js
-const {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  limit,
-} = require("firebase/firestore");
+const { collection, getDocs, query, orderBy } = require("firebase/firestore");
 const { firestore } = require("../database/firebaseConfig");
 
+// Fetch the total number of mentoren, evaluaties, and the evaluation percentage for each school
 export const fetchMenteescholenData = async () => {
   const querySnapshot = await getDocs(collection(firestore, "menteescholen"));
   let totalMentoren = 0;
@@ -41,6 +36,7 @@ export const fetchMenteescholenData = async () => {
   };
 };
 
+// Fetch the average scores for each theme
 export const fetchEvaluationsData = async () => {
   const themes = [
     "Band Mentor-Mentee",
@@ -114,6 +110,7 @@ export const fetchEvaluationsData = async () => {
   return evaluationsData;
 };
 
+// Fetch the 3 most recent answers for question 3 from both mentor and mentee
 export const fetchRecentBandMentorMenteeAnswers = async () => {
   const mentorQuerySnapshot = await getDocs(
     query(
@@ -122,6 +119,7 @@ export const fetchRecentBandMentorMenteeAnswers = async () => {
     )
   );
 
+  // Fetch the 3 most recent answers for question 3 from both mentor and mentee
   const menteeQuerySnapshot = await getDocs(
     query(
       collection(firestore, `evaluaties/tussentijds/Band Mentor-Mentee`),
@@ -132,6 +130,7 @@ export const fetchRecentBandMentorMenteeAnswers = async () => {
   let mentorAnswers = [];
   let menteeAnswers = [];
 
+  // Iterate over each document and extract the mentor answers for question 3
   mentorQuerySnapshot.docs.forEach((doc) => {
     const data = doc.data();
     if (data.mentor_vraag3) {
@@ -143,6 +142,7 @@ export const fetchRecentBandMentorMenteeAnswers = async () => {
     }
   });
 
+  // Iterate over each document and extract the mentee answers for question 3
   menteeQuerySnapshot.docs.forEach((doc) => {
     const data = doc.data();
     if (data.mentee_vraag3) {
@@ -163,4 +163,101 @@ export const fetchRecentBandMentorMenteeAnswers = async () => {
     .slice(0, 3);
 
   return { mentorAnswers, menteeAnswers };
+};
+
+// Fetch all school names and their corresponding IDs
+const fetchSchoolNames = async () => {
+  const querySnapshot = await getDocs(collection(firestore, "menteescholen"));
+  const schoolNames = {};
+
+  querySnapshot.docs.forEach((doc) => {
+    const data = doc.data();
+    schoolNames[doc.id] = data.naam || "Unknown School";
+  });
+
+  console.log("Fetched school names:", schoolNames); // Debug logging
+  return schoolNames;
+};
+
+// Fetch and calculate the average scores for each school
+export const fetchPerTrajectBandMentorMenteeAnswers = async () => {
+  const schoolNames = await fetchSchoolNames();
+
+  const querySnapshot = await getDocs(
+    collection(firestore, `evaluaties/tussentijds/Band Mentor-Mentee`)
+  );
+
+  const schoolData = {};
+
+  // Iterate over each document and calculate the average scores for each school
+  querySnapshot.docs.forEach((doc) => {
+    const data = doc.data();
+    const mentee = data.mentee || {};
+    const schoolId = mentee.schoolId;
+
+    if (!schoolId) {
+      console.error("Missing schoolId in document:", doc.id, data); // Log documents with missing schoolId
+      return; // Skip this document
+    }
+
+    // Get the school name from the schoolId
+    const schoolName = schoolNames[schoolId] || "Unknown School";
+
+    // Initialize the school data if it doesn't exist
+    if (!schoolData[schoolName]) {
+      schoolData[schoolName] = {
+        mentorScore1: 0,
+        menteeScore1: 0,
+        mentorScore2: 0,
+        menteeScore2: 0,
+        mentorCount1: 0,
+        menteeCount1: 0,
+        mentorCount2: 0,
+        menteeCount2: 0,
+      };
+    }
+
+    // Add the scores to the total scores and increment the count
+    if (data.mentor_vraag1 !== undefined) {
+      schoolData[schoolName].mentorScore1 += data.mentor_vraag1;
+      schoolData[schoolName].mentorCount1++;
+    }
+
+    // Add the scores to the total scores and increment the count
+    if (data.mentee_vraag1 !== undefined) {
+      schoolData[schoolName].menteeScore1 += data.mentee_vraag1;
+      schoolData[schoolName].menteeCount1++;
+    }
+
+    // Add the scores to the total scores and increment the count
+    if (data.mentor_vraag2 !== undefined) {
+      schoolData[schoolName].mentorScore2 += data.mentor_vraag2;
+      schoolData[schoolName].mentorCount2++;
+    }
+
+    // Add the scores to the total scores and increment the count
+    if (data.mentee_vraag2 !== undefined) {
+      schoolData[schoolName].menteeScore2 += data.mentee_vraag2;
+      schoolData[schoolName].menteeCount2++;
+    }
+  });
+
+  // Calculate the average scores for each school
+  Object.keys(schoolData).forEach((school) => {
+    const data = schoolData[school];
+    data.averageMentorScore1 = (data.mentorScore1 / data.mentorCount1).toFixed(
+      1
+    );
+    data.averageMenteeScore1 = (data.menteeScore1 / data.menteeCount1).toFixed(
+      1
+    );
+    data.averageMentorScore2 = (data.mentorScore2 / data.mentorCount2).toFixed(
+      1
+    );
+    data.averageMenteeScore2 = (data.menteeScore2 / data.menteeCount2).toFixed(
+      1
+    );
+  });
+
+  return schoolData;
 };

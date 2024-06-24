@@ -98,6 +98,18 @@ const theme = createTheme({
       fontSize: 16,
       color: "#F93C65",
     },
+    trajectscore: {
+      fontFamily: "Montserrat, Arial",
+      fontWeight: 600,
+      fontSize: 16,
+      color: "#202224",
+    },
+    trajectscore2: {
+      fontFamily: "Montserrat, Arial",
+      fontWeight: 600,
+      fontSize: 12,
+      color: "#202224",
+    },
   },
 });
 

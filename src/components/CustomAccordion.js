@@ -5,11 +5,14 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import { Box, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
 import CustomBarChart from "../components/CustomBarChart";
 import ScoreDisplayMentor from "./ScoreDisplayMentor";
 import ScoreDisplayMentee from "./ScoreDisplayMentee";
 import OpenAnswers from "../components/OpenAnswers";
 import Questions from "../components/Questions";
+import ScorePerTraject from "./ScorePerTraject";
+
 import MentorIcon from "../images/emoji-5.svg";
 import MenteeIcon from "../images/emoji-5.svg";
 
@@ -98,7 +101,7 @@ const ChartFrame = styled(Box)({
   justifySelf: "flex-end",
 });
 
-const CustomAccordion = ({ title, questions, icon }) => (
+const CustomAccordion = ({ title, questions, icon, schoolName }) => (
   <StyledAccordion>
     <CustomAccordionSummary expandIcon={<ExpandMoreIcon />}>
       <HeaderFrame>
@@ -135,6 +138,7 @@ const CustomAccordion = ({ title, questions, icon }) => (
             <CustomBarChart />
           </ChartFrame>
         </RowContainer>
+        <ScorePerTraject />
         <OpenAnswers />
       </ColumnContainer>
     </CustomAccordionDetails>
