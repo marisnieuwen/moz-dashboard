@@ -8,22 +8,36 @@ export const fetchMenteescholenData = async () => {
   let totalMentoren = 0;
   let totalEvaluaties = 0;
 
-  const schoolsData = querySnapshot.docs.map((doc) => {
-    const data = doc.data();
-    const schoolMentoren = data.aantalMentoren || 0;
-    const schoolEvaluaties = data.aantalEvaluaties || 0;
+  const schoolsData = await Promise.all(
+    querySnapshot.docs.map(async (doc) => {
+      const data = doc.data();
+      const schoolMentoren = data.aantalMentoren || 0;
+      const schoolEvaluaties = data.aantalEvaluaties || 0;
 
-    totalMentoren += schoolMentoren;
-    totalEvaluaties += schoolEvaluaties;
+      totalMentoren += schoolMentoren;
+      totalEvaluaties += schoolEvaluaties;
 
-    const evaluationPercentage = (schoolEvaluaties / schoolMentoren) * 100 || 0;
+      const evaluationPercentage =
+        (schoolEvaluaties / schoolMentoren) * 100 || 0;
 
-    return {
-      id: doc.id,
-      name: data.naam || "Unknown School", // Assuming each document has a 'name' field for the school name
-      evaluationPercentage,
-    };
-  });
+      // Fetch the groups for each school
+      const groupsSnapshot = await getDocs(
+        collection(firestore, `menteescholen/${doc.id}/groepen`)
+      );
+      const groups = groupsSnapshot.docs.map((groupDoc) => ({
+        id: groupDoc.id,
+        naam: groupDoc.data().naam,
+        ...groupDoc.data(),
+      }));
+
+      return {
+        id: doc.id,
+        name: data.naam || "Unknown School",
+        evaluationPercentage,
+        groups,
+      };
+    })
+  );
 
   const totalEvaluationPercentage =
     (totalEvaluaties / totalMentoren) * 100 || 0;

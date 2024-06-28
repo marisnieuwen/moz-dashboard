@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { Bar } from "react-chartjs-2";
@@ -14,7 +14,6 @@ import {
 
 import VeranderTheorie from "../images/verandertheorie.svg";
 
-// Import the emoji images
 import Emoji1 from "../images/emoji-1.svg";
 import Emoji2 from "../images/emoji-2.svg";
 import Emoji3 from "../images/emoji-3.svg";
@@ -53,7 +52,12 @@ const getEmojiIcon = (score) => {
 };
 
 // Function to generate the PDF
-const generatePDF = async () => {
+const generatePDF = async (
+  data,
+  stakeholder,
+  selectedSchool,
+  selectedGroup
+) => {
   // Select the report container
   const report = document.querySelector(".report-container");
   // Convert the report container to a canvas
@@ -88,11 +92,25 @@ const generatePDF = async () => {
     heightLeft -= pdfHeight;
   }
 
-  // Save the PDF
-  pdf.save("Voortgangsrapportage.pdf");
+  // Determine the file name
+  let fileName = "Voortgangsrapportage.pdf";
+  if (stakeholder === "Gemeente Rotterdam") {
+    fileName = "Voortgangsrapportage-Gemeente.pdf";
+  } else if (stakeholder === "Menteeschool" && selectedSchool) {
+    fileName = `Voortgangsrapportage-${selectedSchool}.pdf`;
+  } else if (
+    stakeholder === "Mentee Leerkracht" &&
+    selectedSchool &&
+    selectedGroup
+  ) {
+    fileName = `Voortgangsrapportage-${selectedSchool}-${selectedGroup}.pdf`;
+  }
+
+  // Save the PDF with the determined file name
+  pdf.save(fileName);
 };
 
-const Report = () => {
+const Report = ({ data, stakeholder, selectedSchool, selectedGroup }) => {
   const { evaluationData, menteeSchoolData } = useData();
 
   if (!evaluationData || !menteeSchoolData) return <p>Loading...</p>;
@@ -122,6 +140,17 @@ const Report = () => {
   // Extracting total evaluation percentages
   const totalEvaluationPercentage = menteeSchoolData.totalEvaluationPercentage;
   const schoolsData = menteeSchoolData.schoolsData;
+
+  const totalMentors = menteeSchoolData.totalMentoren;
+  const totalMentees = menteeSchoolData.totalEvaluaties;
+
+  const themes = [
+    "Band Mentor-Mentee",
+    "Doelen",
+    "Motivatie",
+    "Terugblik",
+    "Veiligheid (Sfeer)",
+  ];
 
   return (
     <div className="report-container">
@@ -170,43 +199,170 @@ const Report = () => {
         programmateam en de verschillende betrokkenen.
       </p>
 
-      <h2>1. Tevredenheid deelnemers</h2>
-      <div style={{ width: "400px", height: "200px" }}>
-        <Bar data={getBarChartData("Tevredenheid", satisfaction)} />
-      </div>
-
-      <h2>3. Wederzijdse band</h2>
-      <div className="band-container">
-        {relationship.map((bond, index) => (
-          <div key={index}>
-            <img
-              src={getEmojiIcon(bond)}
-              alt={`Bond score ${bond}`}
-              style={{ width: "80px", height: "80px" }}
-            />
-            <Typography variant="body1">{`${bond}/5`}</Typography>
+      {stakeholder === "Gemeente Rotterdam" ? (
+        <>
+          <h2>1. Aantal Deelnemers</h2>
+          <p>Mentoren: {totalMentors}</p>
+          <p>Mentees: {totalMentees}</p>
+          <h2>2. Tevredenheid deelnemers</h2>
+          <div style={{ width: "400px", height: "200px" }}>
+            <Bar data={getBarChartData("Tevredenheid", satisfaction)} />
           </div>
-        ))}
-      </div>
 
-      <h2>4. Motivatie van mentoren en mentees</h2>
-      <div style={{ width: "400px", height: "200px" }}>
-        <Bar data={getBarChartData("Motivatie", motivation)} />
-      </div>
+          <h2>3. Wederzijdse band</h2>
+          <div className="band-container">
+            {relationship.map((bond, index) => (
+              <div key={index}>
+                <img
+                  src={getEmojiIcon(bond)}
+                  alt={`Bond score ${bond}`}
+                  style={{ width: "80px", height: "80px" }}
+                />
+                <Typography variant="body1">{`${bond}/5`}</Typography>
+              </div>
+            ))}
+          </div>
 
-      <h2>5. Toerusting van mentoren</h2>
-      <div style={{ width: "400px", height: "200px" }}>
-        <Bar data={getBarChartData("Toerusting", equipment)} />
-      </div>
+          <h2>4. Motivatie van mentoren en mentees</h2>
+          <div style={{ width: "400px", height: "200px" }}>
+            <Bar data={getBarChartData("Motivatie", motivation)} />
+          </div>
 
-      <h3>Evaluatie Percentage per School</h3>
-      <ul>
-        {schoolsData.map((school, index) => (
-          <li key={index}>
-            {school.name}: {school.evaluationPercentage}%
-          </li>
-        ))}
-      </ul>
+          <h2>5. Toerusting van mentoren</h2>
+          <div style={{ width: "400px", height: "200px" }}>
+            <Bar data={getBarChartData("Toerusting", equipment)} />
+          </div>
+        </>
+      ) : stakeholder === "Mentee Leerkracht" ? (
+        <>
+          {themes.map((theme) => (
+            <Box key={theme} mb={4}>
+              <Typography variant="h6">{theme}</Typography>
+              <Box
+                display="flex"
+                justifyContent="flex-start"
+                alignItems="flex-start"
+                mt={2}
+              >
+                <Box mr={4}>
+                  <Typography variant="subtitle1">Vraag 1</Typography>
+                  <Box display="flex" alignItems="center" mb={2}>
+                    <Typography variant="body2" mr={2}>
+                      Mentor
+                    </Typography>
+                    <img
+                      src={getEmojiIcon(
+                        evaluationData[theme].averageMentorScore1
+                      )}
+                      alt="Mentor Score"
+                      width="36"
+                      height="36"
+                    />
+                    <Typography variant="body2" ml={1}>
+                      {evaluationData[theme].averageMentorScore1}
+                    </Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center">
+                    <Typography variant="body2" mr={2}>
+                      Mentee
+                    </Typography>
+                    <img
+                      src={getEmojiIcon(
+                        evaluationData[theme].averageMenteeScore1
+                      )}
+                      alt="Mentee Score"
+                      width="36"
+                      height="36"
+                    />
+                    <Typography variant="body2" ml={1}>
+                      {evaluationData[theme].averageMenteeScore1}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box mr={4}>
+                  <Typography variant="subtitle1">Vraag 2</Typography>
+                  <Box display="flex" alignItems="center" mb={2}>
+                    <Typography variant="body2" mr={2}>
+                      Mentor
+                    </Typography>
+                    <img
+                      src={getEmojiIcon(
+                        evaluationData[theme].averageMentorScore2
+                      )}
+                      alt="Mentor Score"
+                      width="36"
+                      height="36"
+                    />
+                    <Typography variant="body2" ml={1}>
+                      {evaluationData[theme].averageMentorScore2}
+                    </Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center">
+                    <Typography variant="body2" mr={2}>
+                      Mentee
+                    </Typography>
+                    <img
+                      src={getEmojiIcon(
+                        evaluationData[theme].averageMenteeScore2
+                      )}
+                      alt="Mentee Score"
+                      width="36"
+                      height="36"
+                    />
+                    <Typography variant="body2" ml={1}>
+                      {evaluationData[theme].averageMenteeScore2}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          ))}
+        </>
+      ) : (
+        <>
+          <h2>1. Tevredenheid deelnemers</h2>
+          <div style={{ width: "400px", height: "200px" }}>
+            <Bar data={getBarChartData("Tevredenheid", satisfaction)} />
+          </div>
+
+          <h2>3. Wederzijdse band</h2>
+          <div className="band-container">
+            {relationship.map((bond, index) => (
+              <div key={index}>
+                <img
+                  src={getEmojiIcon(bond)}
+                  alt={`Bond score ${bond}`}
+                  style={{ width: "80px", height: "80px" }}
+                />
+                <Typography variant="body1">{`${bond}/5`}</Typography>
+              </div>
+            ))}
+          </div>
+
+          <h2>4. Motivatie van mentoren en mentees</h2>
+          <div style={{ width: "400px", height: "200px" }}>
+            <Bar data={getBarChartData("Motivatie", motivation)} />
+          </div>
+
+          <h2>5. Toerusting van mentoren</h2>
+          <div style={{ width: "400px", height: "200px" }}>
+            <Bar data={getBarChartData("Toerusting", equipment)} />
+          </div>
+
+          {!stakeholder && (
+            <>
+              <h3>Evaluatie Percentage per School</h3>
+              <ul>
+                {schoolsData.map((school, index) => (
+                  <li key={index}>
+                    {school.name}: {school.evaluationPercentage}%
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 };

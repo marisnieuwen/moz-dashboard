@@ -1,8 +1,18 @@
-import React from "react";
-import { Modal, Box, Typography, Button, IconButton } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Modal,
+  Box,
+  Typography,
+  Button,
+  IconButton,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
-import { jsPDF } from "jspdf";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 import { useData } from "../context/DataContext";
 import { generatePDF, Report } from "../report_templates/RapportageTemplate";
@@ -24,8 +34,7 @@ const ModalContainer = styled(Box)(({ theme }) => ({
 
 const HeaderFrame = styled(Box)(({ theme }) => ({
   display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
+  flexDirection: "column",
   padding: theme.spacing(2),
   borderBottom: `1px solid ${theme.palette.divider}`,
   zIndex: 2,
@@ -63,6 +72,9 @@ const StyledButton = styled(Button)(({ variant }) => ({
 
 const RapportageModal = ({ open, handleClose }) => {
   const { evaluationData, menteeSchoolData } = useData();
+  const [selectedStakeholder, setSelectedStakeholder] = useState("");
+  const [selectedSchool, setSelectedSchool] = useState("");
+  const [selectedGroup, setSelectedGroup] = useState("");
 
   if (!evaluationData || !menteeSchoolData) return <p>Loading...</p>;
 
@@ -88,12 +100,41 @@ const RapportageModal = ({ open, handleClose }) => {
       evaluationData["Veiligheid (Sfeer)"].averageMenteeScore,
     ],
     totalEvaluationPercentage: menteeSchoolData.totalEvaluationPercentage,
-    schoolsData: menteeSchoolData.schoolsData,
+    schoolsData: menteeSchoolData.schoolsData.map((school) => ({
+      ...school,
+      groups: school.groups || [], // Zorg ervoor dat de groups-eigenschap bestaat
+    })),
   };
 
   const handleGeneratePDF = () => {
-    generatePDF(data);
+    generatePDF(data, selectedStakeholder, selectedSchool, selectedGroup);
   };
+
+  const handleStakeholderChange = (event) => {
+    const value = event.target.value;
+    setSelectedStakeholder((prev) => (prev === value ? "" : value));
+    setSelectedSchool("");
+    setSelectedGroup("");
+  };
+
+  const handleSchoolChange = (event) => {
+    setSelectedSchool(event.target.value);
+    setSelectedGroup(""); // Reset the selected group when a new school is selected
+  };
+
+  const handleGroupChange = (event) => {
+    setSelectedGroup(event.target.value);
+  };
+
+  const selectedSchoolData = menteeSchoolData.schoolsData.find(
+    (school) => school.name === selectedSchool
+  ) || { groups: [] };
+  const allGroups = [].concat(
+    ...menteeSchoolData.schoolsData.map((school) => school.groups || [])
+  );
+
+  console.log("Selected School Data:", selectedSchoolData); // Debugging statement
+  console.log("All Groups:", allGroups); // Debugging statement
 
   return (
     <Modal
@@ -104,21 +145,118 @@ const RapportageModal = ({ open, handleClose }) => {
     >
       <ModalContainer>
         <HeaderFrame>
-          <Typography id="modal-title" variant="h4" component="h2">
-            Rapportage maken en exporteren
-          </Typography>
-          <IconButton onClick={handleClose}>
-            <CloseIcon />
-          </IconButton>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography id="modal-title" variant="h4" component="h2">
+              Rapportage maken en exporteren
+            </Typography>
+            <IconButton onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <Box mt={2}>
+            <Typography variant="h6">Selecteer de stakeholder:</Typography>
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectedStakeholder === "Gemeente Rotterdam"}
+                    onChange={handleStakeholderChange}
+                    value="Gemeente Rotterdam"
+                  />
+                }
+                label="Gemeente Rotterdam"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectedStakeholder === "Menteeschool"}
+                    onChange={handleStakeholderChange}
+                    value="Menteeschool"
+                  />
+                }
+                label="Menteeschool"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectedStakeholder === "Mentee Leerkracht"}
+                    onChange={handleStakeholderChange}
+                    value="Mentee Leerkracht"
+                  />
+                }
+                label="Mentee Leerkracht"
+              />
+            </FormGroup>
+            {selectedStakeholder === "Menteeschool" && (
+              <Box mt={2}>
+                <Typography variant="h6">Selecteer een school:</Typography>
+                <Select
+                  fullWidth
+                  value={selectedSchool || ""}
+                  onChange={handleSchoolChange}
+                >
+                  {menteeSchoolData.schoolsData.map((school) => (
+                    <MenuItem key={school.id} value={school.name}>
+                      {school.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Box>
+            )}
+            {selectedStakeholder === "Mentee Leerkracht" && (
+              <>
+                <Box mt={2}>
+                  <Typography variant="h6">Selecteer een school:</Typography>
+                  <Select
+                    fullWidth
+                    value={selectedSchool || ""}
+                    onChange={handleSchoolChange}
+                  >
+                    {menteeSchoolData.schoolsData.map((school) => (
+                      <MenuItem key={school.id} value={school.name}>
+                        {school.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
+                <Box mt={2}>
+                  <Typography variant="h6">Selecteer een groep:</Typography>
+                  <Select
+                    fullWidth
+                    value={selectedGroup || ""}
+                    onChange={handleGroupChange}
+                  >
+                    {selectedSchoolData.groups.map((group) => (
+                      <MenuItem key={group.id} value={group.naam}>
+                        {group.naam}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
+              </>
+            )}
+          </Box>
         </HeaderFrame>
         <ContentFrame>
-          <Report data={data} />
+          <Report
+            data={data}
+            stakeholder={selectedStakeholder}
+            selectedSchool={selectedSchool}
+            selectedGroup={selectedGroup}
+          />
         </ContentFrame>
         <FooterFrame>
           <StyledButton
             variant="contained"
             onClick={handleGeneratePDF}
             startIcon={<DownloadRoundedIcon />}
+            disabled={
+              selectedStakeholder === "Mentee Leerkracht" && !selectedGroup
+            }
           >
             Downloaden
           </StyledButton>
